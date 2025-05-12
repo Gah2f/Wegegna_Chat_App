@@ -1,0 +1,51 @@
+import express from "express";
+import "dotenv/config";
+import cors from "cors";
+import http from "http";
+import { conncetDB } from "./configs/db.js";
+import userRouter from "./routes/userRoute.js";
+import messageRouter from "./routes/messageRoute.js";
+import { Server } from "socket.io";
+import { Socket } from "dgram";
+
+const app = express();
+const server = http.createServer(app);
+// Socket.io initilaize
+
+export const io = new Server(server, {
+  cors: { origin: "*" },
+});
+
+export const userSocketMap = {};
+
+io.on("connection", (socket) => {
+  const userId = Socket.handshake.query.userId;
+  console.log("User connected", userId);
+
+  if (userId) userSocketMap[userId] = socket.id;
+
+  io.emit("getOnlineUsers", Object.keys(userSocketMap));
+
+  socket.on("disconnect", () => {
+    console.log("User Disconnected", userId);
+    delete userSocketMap[userId];
+    io.emit("getOnlineUsers", Object.keys(userSocketMap));
+  });
+});
+
+app.use(express.json({ limit: "4mb" }));
+app.use(cors());
+
+app.use("/api/status", (req, res) => {
+  res.send("Server is live");
+});
+app.use("/api/auth", userRouter);
+app.use("/api/messages", messageRouter);
+
+await conncetDB();
+
+const PORT = process.env.PORT || 5000;
+
+app.listen(PORT, (req, res) => {
+  console.log("Server is running on port:", PORT);
+});
