@@ -1,5 +1,6 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import assets from "../assets/chat-app-assets/assets";
+import { AuthContext } from "../context/AuthContext";
 
 function Login() {
   const [currentState, setCurrentState] = useState("Sign up");
@@ -8,7 +9,7 @@ function Login() {
   const [password, setPassword] = useState("");
   const [bio, setBio] = useState("");
   const [isSubmit, setIsSubmit] = useState(false);
-
+  const { login } = useContext(AuthContext);
   const handleSubmit = (e) => {
     e.preventDefault();
 
@@ -16,6 +17,13 @@ function Login() {
       setIsSubmit(true);
       return;
     }
+
+    login(currentState === "Sign up" ? "signup" : "login", {
+      fullName,
+      email,
+      password,
+      bio,
+    });
   };
 
   return (
@@ -112,7 +120,7 @@ function Login() {
               </span>
             </p>
           ) : (
-            <p text-sm text-gray-600>
+            <p className="text-sm text-gray-600">
               Create an account{" "}
               <span
                 onClick={() => {
