@@ -15,6 +15,7 @@ export const ChatProvider = ({ children }) => {
   const getUsers = async () => {
     try {
       const { data } = await axios.get("/api/messages/users");
+      console.log("Data of users:", data)
       if (data.success) {
         setUsers(data.users);
         setUnseenMessages(data.unseenMessages);
@@ -97,7 +98,6 @@ export const ChatProvider = ({ children }) => {
     sendMessage,
     getUsers,
     getMessages,
-    setSelectedUser,
     subscribeToMessages,
   };
   return <ChatContext.Provider value={value}>{children}</ChatContext.Provider>;
