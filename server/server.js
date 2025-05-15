@@ -6,7 +6,7 @@ import { conncetDB } from "./configs/db.js";
 import userRouter from "./routes/userRoute.js";
 import messageRouter from "./routes/messageRoute.js";
 import { Server } from "socket.io";
-import { Socket } from "dgram";
+
 
 const app = express();
 const server = http.createServer(app);
@@ -19,15 +19,27 @@ export const io = new Server(server, {
 export const userSocketMap = {};
 
 io.on("connection", (socket) => {
-  const userId = Socket.handshake.query.userId;
-  console.log("User connected", userId);
+  const userId = socket.handshake.query.userId;
+  // console.log("User connected", userId);
 
   if (userId) userSocketMap[userId] = socket.id;
 
   io.emit("getOnlineUsers", Object.keys(userSocketMap));
+ 
+  socket.on("sendNotification", ({ receiverId, senderName, type }) => {
+  const receiverSocketId = userSocketMap[receiverId];
+
+  if (receiverSocketId) {
+    io.to(receiverSocketId).emit("notification", {
+      senderName,
+      type, // e.g., "message", "media", etc.
+      time: new Date(),
+    });
+  }
+});
 
   socket.on("disconnect", () => {
-    console.log("User Disconnected", userId);
+    // console.log("User Disconnected", userId);
     delete userSocketMap[userId];
     io.emit("getOnlineUsers", Object.keys(userSocketMap));
   });
@@ -46,6 +58,6 @@ await conncetDB();
 
 const PORT = process.env.PORT || 5000;
 
-app.listen(PORT, (req, res) => {
+server.listen(PORT, () => {
   console.log("Server is running on port:", PORT);
 });
