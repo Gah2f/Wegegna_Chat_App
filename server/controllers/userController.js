@@ -6,9 +6,9 @@ import bcrypt from "bcryptjs";
 export const signUp = async (req, res) => {
   const { fullName, password, email, bio } = req.body;
   try {
-    if ((!fullName, !email, !bio, !password)) {
+    if ((!fullName || !email || !bio || !password)) {
       return res.json({ success: false, message: "Missing Details" });
-
+    }
       const user = await User.findOne({ email });
       if (user) {
         return res.json({ success: false, message: "Account already exist" });
@@ -23,17 +23,17 @@ export const signUp = async (req, res) => {
         bio,
       });
 
-      const token = generateToken(newUser._id);
+      const token = generateToken(newUser._id)
       res.json({
         success: true,
         userData: newUser,
         token,
         message: "Account created successfully",
       });
-    }
+    
   } catch (error) {
-    res.json({ success: false, message: "Error occured while sign up" });
-    console.log(error.message);
+    res.json({ success: false, error });
+    console.log(error);
   }
 };
 
@@ -65,7 +65,7 @@ export const checkAuth = (req, res) => {
 export const updateProfile = async (req, res) => {
   try {
     const { profilePicture, bio, fullName } = req.body;
-    const userId = req.user._id;
+    const userId = req.user?._id;
     let updatedUser;
 
     if (!profilePicture) {
@@ -73,9 +73,10 @@ export const updateProfile = async (req, res) => {
         userId,
         { bio, fullName },
         { new: true }
-      );
-    } else {
-      const upload = await cloudinary.uploader.upload(profilePicture);
+      ); 
+
+    } else {  
+      const upload = await cloudinary.uploader.upload(profilePicture)
 
       updatedUser = await User.findByIdAndUpdate(
         userId,
@@ -83,8 +84,10 @@ export const updateProfile = async (req, res) => {
         { new: true }
       ); 
 
+    } 
       res.json({success: true, user: updatedUser}) 
-    }
+
+
   } catch (error) {
     res.json({success: false, message: error.message});
     console.log(error.message)
