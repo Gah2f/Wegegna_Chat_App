@@ -25,18 +25,6 @@ io.on("connection", (socket) => {
   if (userId) userSocketMap[userId] = socket.id;
 
   io.emit("getOnlineUsers", Object.keys(userSocketMap));
- 
-  socket.on("sendNotification", ({ receiverId, senderName, type }) => {
-  const receiverSocketId = userSocketMap[receiverId];
-
-  if (receiverSocketId) {
-    io.to(receiverSocketId).emit("notification", {
-      senderName,
-      type, // e.g., "message", "media", etc.
-      time: new Date(),
-    });
-  }
-});
 
   socket.on("disconnect", () => {
     // console.log("User Disconnected", userId);
