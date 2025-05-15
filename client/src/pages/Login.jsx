@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import assets from "../assets/chat-app-assets/assets";
 import { AuthContext } from "../context/AuthContext";
 
@@ -10,6 +10,7 @@ function Login() {
   const [bio, setBio] = useState("");
   const [isSubmit, setIsSubmit] = useState(false);
   const { login } = useContext(AuthContext);
+
   const handleSubmit = (e) => {
     e.preventDefault();
 
@@ -18,18 +19,21 @@ function Login() {
       return;
     }
 
-    login(currentState === "Sign up" ? "signup" : "login", {
-      fullName,
-      email,
-      password,
-      bio,
-    });
+    if (currentState === "Sign up") {
+      const data = login("signup", { fullName, email, password, bio });
+       console.log(data)
+      
+    } else {
+     const data =  login("login", { email, password });
+      console.log(data)
+    }
+   
   };
 
   return (
     <div className="min-h-screen bg-cover bg-center flex items-center justify-center gap-8 sm:justify-evenly max-sm:flex-col backdrop-blur-2xl">
       <img
-        src={assets.logo_big}
+        src={assets.logotrans}
         alt="Logo Icon"
         className="w-[min(30vw,250px)]"
       />
@@ -37,6 +41,7 @@ function Login() {
       <form
         onSubmit={handleSubmit}
         className="border-2 bg-white/8 text-white border-gray-500 p-6 flex flex-col gap-4 rounded-lg shadow-lg"
+        id="auth"
       >
         <h2 className="font-medium text-2xl flex justify-between items-center">
           {currentState}
