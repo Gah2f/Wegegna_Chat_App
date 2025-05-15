@@ -17,11 +17,14 @@ function SideBar() {
     setUnseenMessages,
   } = useContext(ChatContext); 
 
-  const filteredUsers = input ? users.filter((user)=> user.fullName.toLowerCase().include((input.toLowerCase()))) : users;
+  const filteredUsers = input ? users.filter((user)=> user.fullName.toLowerCase().includes((input.toLowerCase()))) : users;
 
   useEffect(()=>{
     getUsers();
-  },[onlineUser])
+  },[onlineUser]);
+//   useEffect(() => {
+//   console.log("Fetched users:", users);
+// }, [users]);
   return (
     <div
       className={`bg-[#8185B2]/10 h-full p-5 rounded-xl overflow-y-scroll text-white ${
@@ -30,7 +33,7 @@ function SideBar() {
     >
       <div className="pb-5">
         <div className="flex justify-between items-center">
-          <img src={assets.logo} alt="Logo Icon" className="max-w-[640px]" />
+          <img src={assets.logotrans} alt="Logo Icon" className="max-w-[80px]" />
           <div className="relative py-2 group">
             <img
               src={assets.menu_icon}
@@ -66,14 +69,14 @@ function SideBar() {
       <div className="flex flex-col">
         {filteredUsers.map((user, index) => (
           <div
-            onClick={() => setSelectedUser(user)}
+            onClick={() => {setSelectedUser(user); setUnseenMessages(prev => ({...prev, [user._id] : 0}))}}
             key={index}
             className={`relative flex items-center gap-2 p-2 pl-4 rounded cursor-pointer max-sm:text-sm ${
               selectedUser?._id === user._id && "bg-[#282142]/50"
             }`}
           >
             <img
-              src={user?.profilePic || assets.avatar_icon}
+              src={user?.profilePicture || assets.avatar_icon}
               alt="Profile Picture"
               className="w-[35px] aspect-[1/1] rounded-full"
             />
