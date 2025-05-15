@@ -4,10 +4,11 @@ import assets from "../assets/chat-app-assets/assets";
 import { AuthContext } from "../context/AuthContext";
 
 function ProfilePage() {
+  const { authUser, updateProfile } = useContext(AuthContext);
+
   const [selectedImage, setSelectedImage] = useState(null);
   const [name, setName] = useState(authUser.fullName);
   const [bio, setBio] = useState(authUser.bio);
-  const { authUser, updateProfile } = useContext(AuthContext);
   const navigate = useNavigate();
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -78,10 +79,11 @@ function ProfilePage() {
             Save
           </button>
         </form>
-        <img
-          src={ authUser.profilePicture || assets.logo_icon}
+        <img 
+          className={`max-w-44 aspect-square rounded-full mx-10 max-sm:mt-10 ${selectedImage && 'rounded-full'}`}
+
+          src={authUser.profilePicture || assets.logotrans}
           alt="Profile Picture"
-          className={`max-w-[44] aspect-square rounded-full mx-10 max-sm:mt-10 ${selectedImage && "rounded-full"} `}
         />
       </div>
     </div>
