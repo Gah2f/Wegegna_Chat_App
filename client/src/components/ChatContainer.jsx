@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useRef, useState } from "react";
 import assets, { messagesDummyData } from "../assets/chat-app-assets/assets";
-import { formatMessafeTime } from "../lib/utils";
+import { formatMessageTime } from "../lib/utils";
 import { ChatContext } from "../context/chatContext";
 import { AuthContext } from "../context/AuthContext";
 import { toast } from "react-hot-toast";
@@ -55,8 +55,11 @@ function ChatContainer() {
           className="w-8 rounded-full"
         />
         <p className="flex-1 text-lg text-white flex items-center gap-2">
-          {selectedUser.fullName} {onlineUser.includes(selectedUser._id)}{" "}
-          <span className="w-2 h-2 rounded-full bg-green-500"> </span>{" "}
+          {selectedUser.fullName} 
+          {onlineUser.includes(selectedUser._id) &&
+          <span className="w-2 h-2 rounded-full bg-green-500"> </span>
+          }  {" "}
+          
         </p>
 
         <img
@@ -108,7 +111,7 @@ function ChatContainer() {
                 className="w-7 rounded-full"
               />
               <p className="text-gray-500">
-                {formatMessafeTime(message.createdAt)}
+                {formatMessageTime(message.createdAt)}
               </p>
             </div>
           </div>
