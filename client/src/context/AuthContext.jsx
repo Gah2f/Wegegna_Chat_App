@@ -34,7 +34,7 @@ export const AuthProvider = ({ children }) => {
   const login = async (state, credentials) => {
     try {
       const { data } = await axios.post(`/api/auth/${state}`, credentials);
-
+      // console.log("Data" , data)
       if (data.success) {
         setAuthUser(data.userData);
         connectSocket(data.userData);
@@ -43,10 +43,9 @@ export const AuthProvider = ({ children }) => {
         localStorage.setItem("token", data.token);
         toast.success(data.message);
       } else {
-        toast.error(error.message);
+        toast.error("Login failed");
       }
     } catch (error) {
-      console.log(error.message);
       toast.error("Invalid login");
     }
   };
@@ -64,6 +63,7 @@ export const AuthProvider = ({ children }) => {
   const updateProfile = async (body) => {
     try {
       const { data } = await axios.put("/api/auth/update-profile", body);
+      // console.log("Data from update: ", data)
       if (data.success) {
         setAuthUser(data.user);
         toast.success("Profile updated successfully");
@@ -112,7 +112,6 @@ export const AuthProvider = ({ children }) => {
     logout,
     updateProfile,
     navigate,
-    authUser,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
